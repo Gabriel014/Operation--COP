@@ -5,6 +5,7 @@ public class Enemy : MovingObject {
 
 	public int playerDamage;
     public int visionRange;
+	public bool agressive;
     private int enemyDirection;
 
 	private Animator animator;
@@ -21,7 +22,10 @@ public class Enemy : MovingObject {
 		animator = GetComponent<Animator> ();
 		target = GameObject.FindGameObjectWithTag ("Player").transform;
 		base.Start ();
-	}
+		int rand = Random.Range (0, 2);
+			if(rand == 0) agressive = true;
+			if(rand == 1) agressive = false;
+		}
 
 	protected override void AttemptMove <T> (int xDir, int yDir)
 	{
@@ -35,49 +39,69 @@ public class Enemy : MovingObject {
 		skipMove = true;
 	}
     public void MoveEnemy()
-    {
-        if (outOfSight) enemyDirection = Random.Range(1, 5);
-        Debug.Log(enemyDirection);
-        switch (enemyDirection)
-        {
-            case 4: //down
-                gameObject.GetComponent<SpriteRenderer>().sprite = spriteDown;
-                if (gameObject.transform.position.x == GameObject.Find("Player").transform.position.x && gameObject.transform.position.y - GameObject.Find("Player").transform.position.y <= visionRange)
-                {
-                    MovingEnemy();
-                    outOfSight = false;
-                }
-                else outOfSight = true;
-                break;
-            case 3: //left
-                gameObject.GetComponent<SpriteRenderer>().sprite = spriteLeft;
-                if (gameObject.transform.position.y == GameObject.Find("Player").transform.position.y && gameObject.transform.position.x - GameObject.Find("Player").transform.position.x <= visionRange)
-                {
-                    outOfSight = false;
-                    MovingEnemy();
-                }
-                else outOfSight = true;
-                break;
-            case 2: //up
-                gameObject.GetComponent<SpriteRenderer>().sprite = spriteUp;
-                if (gameObject.transform.position.x == GameObject.Find("Player").transform.position.x && GameObject.Find("Player").transform.position.y - gameObject.transform.position.y <= visionRange)
-                {
-                    outOfSight = false;
-                    MovingEnemy();
-                }
-                else outOfSight = true;
-                break;
-            case 1: //right
-                gameObject.GetComponent<SpriteRenderer>().sprite = spriteRight;
-                if (gameObject.transform.position.y == GameObject.Find("Player").transform.position.y && GameObject.Find("Player").transform.position.x - gameObject.transform.position.x <= visionRange)
-                {
-                    outOfSight = false;
-                    MovingEnemy();
-                }
-                else outOfSight = true;
-                break;
-        }
-    }
+	{
+		if (outOfSight)
+			enemyDirection = Random.Range (1, 5);
+			Debug.Log (enemyDirection);
+			switch (enemyDirection) {
+			case 4: //down
+				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteDown;
+				if (gameObject.transform.position.x == GameObject.Find ("Player").transform.position.x && gameObject.transform.position.y - GameObject.Find ("Player").transform.position.y <= visionRange) {
+					outOfSight = false;
+					if (agressive) {
+					MovingEnemy ();
+					}
+				}else {
+					if (gameObject.transform.position.y > 0) {
+						gameObject.transform.position = new Vector2 (gameObject.transform.position.x, gameObject.transform.position.y - 1);
+					} 
+					outOfSight = true;
+				}
+				break;
+			case 3: //left
+				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteLeft;
+				if (gameObject.transform.position.y == GameObject.Find ("Player").transform.position.y && gameObject.transform.position.x - GameObject.Find ("Player").transform.position.x <= visionRange) {
+					outOfSight = false;
+					if (agressive) {
+					MovingEnemy ();
+					}
+				} else {
+					if (gameObject.transform.position.x > 0) {
+						gameObject.transform.position = new Vector2 (gameObject.transform.position.x - 1, gameObject.transform.position.y);
+					} 
+					outOfSight = true;
+				}
+				break;
+			case 2: //up
+				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteUp;
+				if (gameObject.transform.position.x == GameObject.Find ("Player").transform.position.x && GameObject.Find ("Player").transform.position.y - gameObject.transform.position.y <= visionRange) {
+					outOfSight = false;
+					if (agressive) {
+					MovingEnemy ();
+				}
+				} else {
+					if (gameObject.transform.position.y < 7) {
+						gameObject.transform.position = new Vector2 (gameObject.transform.position.x, gameObject.transform.position.y + 1);
+					}
+					outOfSight = true;
+				}
+				break;
+			case 1: //right
+				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteRight;
+				if (gameObject.transform.position.y == GameObject.Find ("Player").transform.position.y && GameObject.Find ("Player").transform.position.x - gameObject.transform.position.x <= visionRange) {
+					outOfSight = false;
+					if (agressive) {
+					MovingEnemy ();
+					}
+				} else {
+					if (gameObject.transform.position.x < 7) {
+						gameObject.transform.position = new Vector2 (gameObject.transform.position.x + 1, gameObject.transform.position.y);
+					}
+					outOfSight = true;
+				}
+				break;
+			}
+		}
 
 	public void MovingEnemy()
 	{
