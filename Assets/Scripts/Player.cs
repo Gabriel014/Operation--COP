@@ -27,7 +27,7 @@ public class Player : MovingObject {
 
 		food = GameManager.instance.playerFoodPoints;
 
-		foodText.text = "Food: " + food;
+		foodText.text = "Energy: " + food;
 
 		base.Start ();
 	}
@@ -94,7 +94,7 @@ public class Player : MovingObject {
 	protected override void AttemptMove <T> (int xDir, int yDir)
 	{
 		food--;
-		foodText.text = "Food: " + food;
+		foodText.text = "Energy: " + food;
 
 		base.AttemptMove <T> (xDir, yDir);
 
@@ -142,7 +142,7 @@ public class Player : MovingObject {
 	{
 		animator.SetTrigger ("playerHit");
 		food -= loss;
-		foodText.text = "-" + loss + " Food: " + food;
+		foodText.text = "-" + loss + " Energy: " + food;
 		CheckIfGameOver ();
 	}
 
