@@ -13,9 +13,12 @@ public class Enemy : MovingObject {
 	public bool agressive;
     private int enemyDirection;
 
+    private GameObject[] walls;
+
 	private Animator animator;
 	private Transform target;
 	private bool skipMove;
+    private bool wallInPlace;
     public bool outOfSight = true;
 	public AudioClip enemyAttack1;
 	public AudioClip enemyAttack2;
@@ -42,7 +45,9 @@ public class Enemy : MovingObject {
 	}
     public void MoveEnemy()
 	{
-		if (outOfSight)
+        wallInPlace = false;
+
+        if (outOfSight)
 			enemyDirection = Random.Range (1, 5);
 			Debug.Log (enemyDirection);
 			switch (enemyDirection) {
@@ -56,9 +61,16 @@ public class Enemy : MovingObject {
 						MovingEnemyToFlee ();
 					}
 				}else {
-					if (gameObject.transform.position.y > 0) {
-						gameObject.transform.position = new Vector2 (gameObject.transform.position.x, gameObject.transform.position.y - 1);
-					} 
+                        walls = GameObject.FindGameObjectsWithTag("Coliders");
+                        for (int i = 0; i < walls.Length; i++)
+                        {
+                            if (walls[i].transform.position == new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 1))
+                            {
+                                wallInPlace = true;
+                                break;
+                            }
+                        }
+                        if (!wallInPlace) gameObject.transform.position = new Vector3 (gameObject.transform.position.x, gameObject.transform.position.y - 1);
 					outOfSight = true;
 				}
 				break;
@@ -72,43 +84,76 @@ public class Enemy : MovingObject {
 						MovingEnemyToFlee ();
 					}
 				} else {
-					if (gameObject.transform.position.x > 0) {
-						gameObject.transform.position = new Vector2 (gameObject.transform.position.x - 1, gameObject.transform.position.y);
-					} 
-					outOfSight = true;
+                        walls = GameObject.FindGameObjectsWithTag("Coliders");
+                        for (int i = 0; i < walls.Length; i++)
+                        {
+                            if (walls[i].transform.position == new Vector3(gameObject.transform.position.x - 1, gameObject.transform.position.y))
+                            {
+                                wallInPlace = true;
+                                break;
+                            }
+                        }
+                        if (!wallInPlace) gameObject.transform.position = new Vector3(gameObject.transform.position.x - 1, gameObject.transform.position.y);
+                    outOfSight = true;
 				}
 				break;
 			case 2: //up
 				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteUp;
-				if (gameObject.transform.position.x == GameObject.Find ("Player").transform.position.x && GameObject.Find ("Player").transform.position.y - gameObject.transform.position.y <= visionRange) {
-					outOfSight = false;
-					if (current == State.Agressive  && gameObject.tag != "Capturable") {
-						MovingEnemyToKill ();
-					} if(gameObject.tag == "Capturable") {
-						MovingEnemyToFlee ();
-					}
-				} else {
-					if (gameObject.transform.position.y < 7) {
-						gameObject.transform.position = new Vector2 (gameObject.transform.position.x, gameObject.transform.position.y + 1);
-					}
-					outOfSight = true;
-				}
+                if (gameObject.transform.position.x == GameObject.Find("Player").transform.position.x && GameObject.Find("Player").transform.position.y - gameObject.transform.position.y <= visionRange)
+                {
+                    outOfSight = false;
+                    if (current == State.Agressive && gameObject.tag != "Capturable")
+                    {
+                        MovingEnemyToKill();
+                    }
+                    if (gameObject.tag == "Capturable")
+                    {
+                        MovingEnemyToFlee();
+                    }
+                }
+                else
+                {
+                    walls = GameObject.FindGameObjectsWithTag("Coliders");
+                    for (int i = 0; i < walls.Length; i++)
+                    {
+                        if (walls[i].transform.position == new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 1))
+                        {
+                            wallInPlace = true;
+                            break;
+                        }
+                    }
+                    if (!wallInPlace) gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 1);
+                    outOfSight = true;
+                }
 				break;
 			case 1: //right
 				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteRight;
-				if (gameObject.transform.position.y == GameObject.Find ("Player").transform.position.y && GameObject.Find ("Player").transform.position.x - gameObject.transform.position.x <= visionRange) {
-					outOfSight = false;
-					if (current == State.Agressive  && gameObject.tag != "Capturable") {
-						MovingEnemyToKill ();
-					} if(gameObject.tag == "Capturable") {
-						MovingEnemyToFlee ();
-					}
-				} else {
-					if (gameObject.transform.position.x < 7) {
-						gameObject.transform.position = new Vector2 (gameObject.transform.position.x + 1, gameObject.transform.position.y);
-					}
-					outOfSight = true;
-				}
+                if (gameObject.transform.position.y == GameObject.Find("Player").transform.position.y && GameObject.Find("Player").transform.position.x - gameObject.transform.position.x <= visionRange)
+                {
+                    outOfSight = false;
+                    if (current == State.Agressive && gameObject.tag != "Capturable")
+                    {
+                        MovingEnemyToKill();
+                    }
+                    if (gameObject.tag == "Capturable")
+                    {
+                        MovingEnemyToFlee();
+                    }
+                }
+                else
+                {
+                    walls = GameObject.FindGameObjectsWithTag("Coliders");
+                    for (int i = 0; i < walls.Length; i++)
+                    {
+                        if (walls[i].transform.position == new Vector3(gameObject.transform.position.x + 1, gameObject.transform.position.y))
+                        {
+                            wallInPlace = true;
+                            break;
+                        }
+                    }
+                    if (!wallInPlace) gameObject.transform.position = new Vector3(gameObject.transform.position.x + 1, gameObject.transform.position.y);
+                    outOfSight = true;
+                }
 				break;
 			}
 		}
