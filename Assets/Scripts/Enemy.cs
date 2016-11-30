@@ -3,6 +3,11 @@ using System.Collections;
 
 public class Enemy : MovingObject {
 
+	public enum State{
+		Agressive, Passive
+	}
+
+	public State current;
 	public int playerDamage;
     public int visionRange;
 	public bool agressive;
@@ -22,9 +27,6 @@ public class Enemy : MovingObject {
 		animator = GetComponent<Animator> ();
 		target = GameObject.FindGameObjectWithTag ("Player").transform;
 		base.Start ();
-		int rand = Random.Range (0, 2);
-			if(rand == 0) agressive = true;
-			if(rand == 1) agressive = false;
 		}
 
 	protected override void AttemptMove <T> (int xDir, int yDir)
@@ -48,8 +50,10 @@ public class Enemy : MovingObject {
 				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteDown;
 				if (gameObject.transform.position.x == GameObject.Find ("Player").transform.position.x && gameObject.transform.position.y - GameObject.Find ("Player").transform.position.y <= visionRange) {
 					outOfSight = false;
-					if (agressive) {
-					MovingEnemy ();
+					if (current == State.Agressive && gameObject.tag != "Capturable") {
+						MovingEnemyToKill ();
+					} if(gameObject.tag == "Capturable") {
+						MovingEnemyToFlee ();
 					}
 				}else {
 					if (gameObject.transform.position.y > 0) {
@@ -62,8 +66,10 @@ public class Enemy : MovingObject {
 				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteLeft;
 				if (gameObject.transform.position.y == GameObject.Find ("Player").transform.position.y && gameObject.transform.position.x - GameObject.Find ("Player").transform.position.x <= visionRange) {
 					outOfSight = false;
-					if (agressive) {
-					MovingEnemy ();
+					if (current == State.Agressive  && gameObject.tag != "Capturable") {
+						MovingEnemyToKill ();
+					} if(gameObject.tag == "Capturable") {
+						MovingEnemyToFlee ();
 					}
 				} else {
 					if (gameObject.transform.position.x > 0) {
@@ -76,9 +82,11 @@ public class Enemy : MovingObject {
 				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteUp;
 				if (gameObject.transform.position.x == GameObject.Find ("Player").transform.position.x && GameObject.Find ("Player").transform.position.y - gameObject.transform.position.y <= visionRange) {
 					outOfSight = false;
-					if (agressive) {
-					MovingEnemy ();
-				}
+					if (current == State.Agressive  && gameObject.tag != "Capturable") {
+						MovingEnemyToKill ();
+					} if(gameObject.tag == "Capturable") {
+						MovingEnemyToFlee ();
+					}
 				} else {
 					if (gameObject.transform.position.y < 7) {
 						gameObject.transform.position = new Vector2 (gameObject.transform.position.x, gameObject.transform.position.y + 1);
@@ -90,8 +98,10 @@ public class Enemy : MovingObject {
 				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteRight;
 				if (gameObject.transform.position.y == GameObject.Find ("Player").transform.position.y && GameObject.Find ("Player").transform.position.x - gameObject.transform.position.x <= visionRange) {
 					outOfSight = false;
-					if (agressive) {
-					MovingEnemy ();
+					if (current == State.Agressive  && gameObject.tag != "Capturable") {
+						MovingEnemyToKill ();
+					} if(gameObject.tag == "Capturable") {
+						MovingEnemyToFlee ();
 					}
 				} else {
 					if (gameObject.transform.position.x < 7) {
@@ -103,9 +113,9 @@ public class Enemy : MovingObject {
 			}
 		}
 
-	public void MovingEnemy()
+	public void MovingEnemyToKill()
 	{
-        Debug.Log("Seeing Enemy");
+        Debug.Log("Seeing Enemy AGRESSIVE");
 		int xDir = 0;
 		int yDir = 0;
 
@@ -113,6 +123,20 @@ public class Enemy : MovingObject {
 			yDir = target.position.y > transform.position.y ? 1 : -1;
 		else
 			xDir = target.position.x > transform.position.x ? 1 : -1;
+
+		AttemptMove <Player> (xDir, yDir);
+	}
+
+	public void MovingEnemyToFlee()
+	{
+		Debug.Log("Seeing Enemy FLEE");
+		int xDir = 0;
+		int yDir = 0;
+
+		if (Mathf.Abs (target.position.x - transform.position.x) < float.Epsilon)
+			yDir = target.position.y < transform.position.y ? 1 : -1;
+		else
+			xDir = target.position.x < transform.position.x ? 1 : -1;
 
 		AttemptMove <Player> (xDir, yDir);
 	}
@@ -126,5 +150,12 @@ public class Enemy : MovingObject {
 		animator.SetTrigger ("enemyAttack");
 
 		SoundManager.instance.RandomizeSfx (enemyAttack1, enemyAttack2);
+	}
+
+	void Update() {
+		if (gameObject.transform.position.x == GameObject.Find ("Player").transform.position.x
+			&& gameObject.transform.position.y == GameObject.Find ("Player").transform.position.y) {
+			gameObject.transform.position = new Vector2 (gameObject.transform.position.x + 1, gameObject.transform.position.y + 1);
+		}
 	}
 }
