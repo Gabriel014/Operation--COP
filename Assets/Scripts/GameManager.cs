@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour {
 	public int playerFoodPoints = 100;
 	[HideInInspector] public bool playersTurn = true;
 
+	public static bool canExit = true;
+
 	private Text levelText;
 	private GameObject levelImage;
 	private int level = 0;
@@ -67,6 +69,8 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		Debug.Log ("Can exit: " + GameManager.canExit);
+
 		if (playersTurn || enemiesMoving || doingSetup)
 			return;
 

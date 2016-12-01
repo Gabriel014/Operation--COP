@@ -111,18 +111,22 @@ public class Player : MovingObject {
 	private void OnTriggerEnter2D (Collider2D other)
 	{
 		if (other.tag == "Exit") {
-			Invoke ("Restart", restartLevelDelay);
-			enabled = false;
+			if (GameManager.canExit) {
+				Invoke ("Restart", restartLevelDelay);
+				enabled = false;
+			}
 		} else if (other.tag == "Food") {
 			food += pointsPerFood;
 			foodText.text = "+" + pointsPerFood + " Food: " + food;
-			SoundManager.instance.RandomizeSfx(eatSound1, eatSound2);
+			SoundManager.instance.RandomizeSfx (eatSound1, eatSound2);
 			other.gameObject.SetActive (false);
 		} else if (other.tag == "Soda") {
 			food += pointsPerSoda;
 			foodText.text = "+" + pointsPerSoda + " Food: " + food;
-			SoundManager.instance.RandomizeSfx(drinkSound1, drinkSound2);
+			SoundManager.instance.RandomizeSfx (drinkSound1, drinkSound2);
 			other.gameObject.SetActive (false);
+		} else if (other.tag == "Capturable") {
+			other.gameObject.transform.position = new Vector2 (100, 0);
 		}
 	}
 

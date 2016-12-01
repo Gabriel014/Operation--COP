@@ -10,10 +10,10 @@ public class Enemy : MovingObject {
 	public State current;
 	public int playerDamage;
     public int visionRange;
-	public bool agressive;
     private int enemyDirection;
 
     private GameObject[] walls;
+	private GameObject[] capturables;
 
 	private Animator animator;
 	private Transform target;
@@ -41,7 +41,7 @@ public class Enemy : MovingObject {
 
 		base.AttemptMove<T> (xDir, yDir);
 
-		skipMove = true;
+		skipMove = false;
 	}
     public void MoveEnemy()
 	{
@@ -49,7 +49,7 @@ public class Enemy : MovingObject {
 
         if (outOfSight)
 			enemyDirection = Random.Range (1, 5);
-			Debug.Log (enemyDirection);
+			//Debug.Log (enemyDirection);
 			switch (enemyDirection) {
 			case 4: //down
 				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteDown;
@@ -198,6 +198,16 @@ public class Enemy : MovingObject {
 	}
 
 	void Update() {
+
+		capturables = GameObject.FindGameObjectsWithTag ("Capturable");
+		for (int i = 0; i < capturables.Length; i++) {
+			if (capturables [i].transform.position.x <= 9) {
+				GameManager.canExit = false;
+			} else {
+				GameManager.canExit = true;
+			}
+		}
+
 		if (gameObject.transform.position.x == GameObject.Find ("Player").transform.position.x
 			&& gameObject.transform.position.y == GameObject.Find ("Player").transform.position.y) {
 			gameObject.transform.position = new Vector2 (gameObject.transform.position.x + 1, gameObject.transform.position.y + 1);
