@@ -22,8 +22,6 @@ public class Enemy : MovingObject {
     public bool outOfSight = true;
 	public AudioClip enemyAttack1;
 	public AudioClip enemyAttack2;
-
-    public Sprite spriteDown, spriteLeft, spriteUp, spriteRight;
 	
 	protected override void Start () {
 		GameManager.instance.AddEnemyToList (this);
@@ -52,7 +50,6 @@ public class Enemy : MovingObject {
 			//Debug.Log (enemyDirection);
 			switch (enemyDirection) {
 			case 4: //down
-				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteDown;
 				if (gameObject.transform.position.x == GameObject.Find ("Player").transform.position.x && gameObject.transform.position.y - GameObject.Find ("Player").transform.position.y <= visionRange) {
 					outOfSight = false;
 					if (current == State.Agressive && gameObject.tag != "Capturable") {
@@ -75,7 +72,7 @@ public class Enemy : MovingObject {
 				}
 				break;
 			case 3: //left
-				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteLeft;
+                gameObject.transform.localScale = new Vector3 (1, 1); 
 				if (gameObject.transform.position.y == GameObject.Find ("Player").transform.position.y && gameObject.transform.position.x - GameObject.Find ("Player").transform.position.x <= visionRange) {
 					outOfSight = false;
 					if (current == State.Agressive  && gameObject.tag != "Capturable") {
@@ -98,7 +95,6 @@ public class Enemy : MovingObject {
 				}
 				break;
 			case 2: //up
-				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteUp;
                 if (gameObject.transform.position.x == GameObject.Find("Player").transform.position.x && GameObject.Find("Player").transform.position.y - gameObject.transform.position.y <= visionRange)
                 {
                     outOfSight = false;
@@ -127,7 +123,7 @@ public class Enemy : MovingObject {
                 }
 				break;
 			case 1: //right
-				gameObject.GetComponent<SpriteRenderer> ().sprite = spriteRight;
+                gameObject.transform.localScale = new Vector3(-1, 1);
                 if (gameObject.transform.position.y == GameObject.Find("Player").transform.position.y && GameObject.Find("Player").transform.position.x - gameObject.transform.position.x <= visionRange)
                 {
                     outOfSight = false;
